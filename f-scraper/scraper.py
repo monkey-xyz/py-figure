@@ -1,11 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+
+def get_last(page):
+  q = urlparse(page)
+  return q.query
 
 # Sample URL for testing
-response = requests.get('https://myfigurecollection.net/browse.v4.php?mode=search&rootId=0&status=-1&categoryId=-1&orEntries[]=1590&domainId=-1&noReleaseDate=0&releaseTypeId=0&ratingId=0&isCastoff=0&hasBootleg=0&tagId=0&noBarcode=0&clubId=0&isDraft=0&year=2023&month=2&acc=0&separator=0&sort=insert&output=2&current=categoryId&order=desc&page=1')
+response = requests.get('https://myfigurecollection.net/browse.v4.php?mode=search&rootId=0&status=-1&categoryId=-1&orEntries[]=1590&domainId=-1&noReleaseDate=0&releaseTypeId=0&ratingId=0&isCastoff=0&hasBootleg=0&tagId=0&noBarcode=0&clubId=0&isDraft=0&year=2023&month=2&acc=0&separator=0&sort=insert&output=2&current=categoryId&order=desc&page=')
 soup = BeautifulSoup(response.content, 'html.parser')
 
 d = soup.find_all('span', class_='item-icon')
+
+end_page = soup.find('a', class_='nav-last').get('href')
 
 """
 TO DO
@@ -18,4 +25,4 @@ Format the data.
 for pages in range(1, 20):
   pass
 
-print(d)
+print(get_last(end_page))
