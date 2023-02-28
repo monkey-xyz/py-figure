@@ -7,10 +7,12 @@ url_to = 'https://myfigurecollection.net/browse.v4.php?mode=search&rootId=0&stat
 
 figure_entries = []
 
-# Working on adding a method to pull the first img from the entry pages. 
 
+"""
+Change the second parameter to the maximum or minimum pages you wish to go over.
 
-# Will update this, but change the second parameter to the maximum amount of pages.
+In case of a single page, you can delete the for loop and all cases of [i].
+"""
 for pages in range(1, 20):
   resp = requests.get(url_to + str(pages))
   soup = BeautifulSoup(resp.content, 'html.parser')
@@ -18,18 +20,15 @@ for pages in range(1, 20):
 
   for i in range(len(entry)):
     f_name = entry[i].find('img').get('alt')
-    f_link = 'https://myfigurecollection.net/item/' + str(entry[i].find('a').get('href'))
+    f_link = 'https://myfigurecollection.net' + str(entry[i].find('a').get('href'))
     
     fr = requests.get(f_link)
     fs = BeautifulSoup(fr.content, 'html.parser')
-    #f_img = fs.find_all('a', class_='main')
+    f_img = fs.find(class_='main').find_all(recursive=False)[0].get('src')
 
-    #print(fs)
-
-    print(f_name)
-
-    figure_entries.append({"name": f_name, "link": f_link})
+    figure_entries.append({"name": f_name, "link": f_link, "image": f_img})
   
-    # print(entry[i].find('a').get('href'))
-  
-#print(figure_entries)
+print(figure_entries)
+
+with open("selection.json", "w") as outfile:
+  json.dump((figure_entries), outfile)
